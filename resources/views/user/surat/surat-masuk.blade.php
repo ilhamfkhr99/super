@@ -52,13 +52,13 @@
                           <tr>
                             <th>No</th>
                             <th>Pemohon</th>
-                            <th>Unit</th>
+                            <th>Lokasi</th>
                             <th>Jenis Pemeliharaan</th>
                             <th>Macam Perbaikan</th>
-                            <th>Kerusakan</th>
+                            {{-- <th>Kerusakan</th> --}}
                             <th>Tanggal</th>
-                            <th>Kondisi Barang</th>
-                            <th>Tindakan</th>
+                            {{-- <th>Kondisi Barang</th> --}}
+                            {{-- <th>Tindakan</th> --}}
                             <th>Status</th>
                             <th>Aksi</th>
                           </tr>
@@ -67,34 +67,48 @@
                           @php
                                 $no = 1;
                           @endphp
-                          @foreach ($surat as $row)
+                          @foreach ($surat as $key => $row)
                           <tr>
-                              <td>{{ $no++ }}</td>
+                              <td>{{ $surat->firstItem() + $key }}</td>
                               <td>{{ $row->nama_user }}</td>
                               <td>{{ $row->lokasi }}</td>
                               <td>{{ $row->jenis_pemeliharaan }}</td>
                               <td>{{ $row->macam }}</td>
-                              <td>{{ $row->kerusakan }}</td>
+                              {{-- <td>{{ $row->kerusakan }}</td> --}}
                               <td>{{ $row->waktu }}</td>
-                              <td>{{ $row->kondisi }}</td>
-                              <td>{{ $row->tindakan }}</td>
-                              @if($row->status == 'Menunggu')
-                              <td><span class="badge badge-pill badge-primary">{{ $row->status }}</span></td>
-                              @elseif ($row->status == 'Proses')
-                              <td><span class="badge badge-pill badge-warning">{{ $row->status }}</span></td>
-                              @endif
+                              {{-- <td>{{ $row->kondisi }}</td> --}}
+                              {{-- <td>{{ $row->tindakan }}</td> --}}
+                              @if($row->status == 'Belum dikonfirmasi')
+                                  <td><span class="badge badge-pill badge-danger">{{ $row->status }}</span></td>
+                                  @elseif ($row->status == 'Telah dikonfirmasi')
+                                  <td><span class="badge badge-pill badge-primary">{{ $row->status }}</span></td>
+                                  @elseif ($row->status == 'Proses')
+                                  <td><span class="badge badge-pill badge-warning">{{ $row->status }}</span></td>
+                                  @else
+                                  <td><span class="badge badge-pill badge-success">{{ $row->status }}</span></td>
+                                  @endif
                             <td>
-                                {{-- <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd-{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda tangan</button> --}}
-                                <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
-                                <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
-                                <button type="button" class="btn mb-2 btn-outline-danger" data-toggle="modal" data-target="#hapus-{{ $row->id_surat }}"><span class="fe fe-trash fe-16 mr-1"></span>Hapus</button>
+                                @if(empty($row->ttd2))
+                                    <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                @elseif(empty($row->ttd3))
+                                    <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                @elseif(empty($row->ttd4))
+                                    <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd-{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
+                                    <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                @elseif(empty($row->ttd5))
+                                    <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd-{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
+                                    <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                @else
+                                    <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                @endif
                             </td>
                           </tr>
                           @endforeach
                         </tbody>
                       </table>
                     </div>
-                    <nav aria-label="Table Paging" class="my-3">
+                    {{ $surat->links('vendor.pagination.bootstrap-4') }}
+                    {{-- <nav aria-label="Table Paging" class="my-3">
                       <ul class="pagination justify-content-end mb-0">
                         <li class="page-item"><a class="page-link" href="#">Previous</a></li>
                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
@@ -102,7 +116,7 @@
                         <li class="page-item"><a class="page-link" href="#">3</a></li>
                         <li class="page-item"><a class="page-link" href="#">Next</a></li>
                       </ul>
-                    </nav>
+                    </nav> --}}
                   </div>
                 </div> <!-- Bordered table -->
             </div> <!-- .row -->
@@ -238,34 +252,36 @@
 
 @endsection
 
+
 @foreach ($surat as $row)
-<div class="modal fade " id="ttd-{{ $row->id_surat }}" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true">
+<div class="modal fade" id="ttd-{{ $row->id_surat }}" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true" data-id="{{ $row->id_surat }}">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="varyModalLabel">Tanda Tangan</h5>
+          <h5 class="modal-title" id="varyModalLabel">Tanda Tangan Pelaksanaan Surat</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="">
+            <form class="form-horizontal" action="{{ url('terima-surat') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label class="" for="">Silahkan membuat tandatangan sesuai</label>
-                             <br/>
-                             <div id="sig"></div>
-                             <br/>
-                             <textarea id="signature64" name="signed" style="display:none"></textarea>
-                             {{-- <button id="clear" class="btn btn-danger btn-sm">Hapus Tandatangan</button> --}}
-                         </div>
-                         <br/>
-                         <button id="clear" class="btn btn-danger btn-sm">Hapus Tandatangan</button>
-                         <button class="btn btn-success">Simpan</button>
+                            <input type="hidden" class="form-control" name="id_surat" id="id" value="{{ $row->id_surat }}">
+                            @if(empty($row->ttd4))
+                            <input type="hidden" class="form-control" name="ttd4" id="ttd4">
+                            @else
+                            <input type="hidden" class="form-control" name="ttd5" id="ttd5">
+                            @endif
+                            <h3>Apakah Anda Yakin Surat Sudah Ditindaklanjuti ?</h3>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn mb-2 btn-primary">Ya</button>
                 </div>
             </form>
         </div>

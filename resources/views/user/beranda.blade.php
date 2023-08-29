@@ -8,7 +8,6 @@
             <h2 class="h5 page-title">Dashboard</h2><br>
           <div class="row">
             @foreach ($bidang as $row)
-                {{-- <div class="col-md-6 col-xl-3 mb-4"> --}}
                 <div class="col-lg-3 col-6 mb-4">
                     <div class="card shadow border-0">
                     <div class="card-body">
@@ -35,6 +34,9 @@
                 </div>
             @endforeach
           </div> <!-- end section -->
+          <div class="row">
+            <canvas id="myChart" height="100px"></canvas>
+          </div>
         </div>
       </div> <!-- .row -->
     </div> <!-- .container-fluid -->
@@ -164,3 +166,30 @@
     </div>
 </main> <!-- main -->
 @endsection
+{{-- <script type="text/javascript">
+
+    var labels =  {{ Js::from($labels) }};
+    var users =  {{ Js::from($data) }};
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: users,
+        }]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {}
+    };
+
+    const myChart = new Chart(
+        document.getElementById('#myChart'),
+        config
+    );
+
+</script> --}}

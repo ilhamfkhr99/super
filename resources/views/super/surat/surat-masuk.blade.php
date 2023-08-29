@@ -1,5 +1,7 @@
+{{-- <link rel="icon" href="{{ asset('light/assets/images/logo-yarsis.png') }}">
+<title>Surat Masuk</title> --}}
 @extends('layouts.main')
-@section('title', 'Data Bidang')
+@section('title', 'Surat Masuk')
 @section('content')
 <main role="main" class="main-content">
     <div class="container-fluid">
@@ -22,7 +24,7 @@
                                 <div class="form-row">
                                   <div class="form-group col-auto">
                                     <label for="search" class="sr-only">Search</label>
-                                    <input type="text" class="form-control" id="search" value="" placeholder="Search">
+                                    <input type="text" class="form-control search" id="search" value="" placeholder="Search">
                                   </div>
                                   <div class="form-group col-auto ml-3">
                                     <select class="custom-select my-1 mr-sm-2" id="macam">
@@ -55,12 +57,12 @@
                                 <th>Nomer Surat</th>
                                 <th>Macam Perbaikan</th>
                                 <th>Jenis Pemeliharaan</th>
-                                <th>Kerusakan</th>
-                                <th>Tindakan</th>
+                                {{-- <th>Kerusakan</th> --}}
+                                {{-- <th>Tindakan</th> --}}
                                 <th>Tanggal</th>
                                 <th>Status</th>
                                 <th>Lokasi</th>
-                                <th>Kondisi Barang</th>
+                                {{-- <th>Kondisi Barang</th> --}}
                                 <th>Aksi</th>
                               </tr>
                             </thead>
@@ -68,20 +70,22 @@
                               @php
                                     $no = 1;
                               @endphp
-                              @foreach ($surat as $row)
+                              @foreach ($surat as $key => $row)
                               @php
                                   $ttd = App\Models\Ttd::where('id_surat', $row->id_surat)->first();
                               @endphp
                               <tr>
-                                  <td>{{ $no++ }}</td>
+                                  <td>{{ $surat->firstItem() + $key }}</td>
                                   <td>{{ $row->nama_user }}</td>
                                   <td>{{ $row->nomer }}</td>
                                   <td>{{ $row->macam }}</td>
                                   <td>{{ $row->jenis_pemeliharaan }}</td>
-                                  <td>{{ $row->kerusakan }}</td>
-                                  <td>{{ $row->tindakan }}</td>
+                                  {{-- <td>{{ $row->kerusakan }}</td> --}}
+                                  {{-- <td>{{ $row->tindakan }}</td> --}}
                                   <td>{{ $row->waktu }}</td>
-                                  @if($row->status == 'Menunggu')
+                                  @if($row->status == 'Belum dikonfirmasi')
+                                  <td><span class="badge badge-pill badge-danger">{{ $row->status }}</span></td>
+                                  @elseif ($row->status == 'Telah dikonfirmasi')
                                   <td><span class="badge badge-pill badge-primary">{{ $row->status }}</span></td>
                                   @elseif ($row->status == 'Proses')
                                   <td><span class="badge badge-pill badge-warning">{{ $row->status }}</span></td>
@@ -89,38 +93,114 @@
                                   <td><span class="badge badge-pill badge-success">{{ $row->status }}</span></td>
                                   @endif
                                   <td>{{ $row->lokasi }}</td>
-                                  <td>{{ $row->kondisi }}</td>
+                                  {{-- <td>{{ $row->kondisi }}</td> --}}
                                 <td>
-                                    @if(empty($ttd->id_surat))
-                                    <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Konfirmasi Terima</button>
-                                    <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
-                                    @else
-                                    <button type="button" class="btn mb-2 btn-outline-info" data-toggle="modal" data-target="#edit-{{ $row->id_surat }}"><span class="fe fe-chevron-right fe-16 mr-1"></span>Tindak Lanjut</button>
-                                        @if(empty($row->tindakan))
-                                        {{-- <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button> --}}
-                                        <a href="{{ url('user/catatan-surat/'.$row->id_surat) }}" class="btn mb-2 btn-outline-success"><span class="fe fe-activity fe-16 mr-1"></span>Progres</a>
-                                        <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                    @if(empty($row->ttd1))
+                                        @if(Auth::user()->id_organisasi == 19 or Auth::user()->id_level == 9)
+                                            <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#konfirmasi{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Konfirmasi Terima</button>
+                                            <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
                                         @else
-                                        <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
-                                        <a href="{{ url('user/catatan-surat/'.$row->id_surat) }}" class="btn mb-2 btn-outline-success"><span class="fe fe-activity fe-16 mr-1"></span>Progres</a>
-                                        <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                            <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
                                         @endif
+                                    @elseif(empty($row->ttd2))
+
+                                        {{-- Level Admin SIM --}}
+                                        @if(Auth::user()->id_organisasi == 19 && Auth::user()->id_level == 9)
+                                            <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+
+                                        {{-- Level Karyawan Biasa --}}
+                                        @elseif((Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20) && Auth::user()->id_level == 10)
+                                            @if(empty($row->tindakan))
+                                                <button type="button" class="btn mb-2 btn-outline-info" data-toggle="modal" data-target="#edit-{{ $row->id_surat }}"><span class="fe fe-chevron-right fe-16 mr-1"></span>Tindak Lanjut</button>
+                                                <a href="{{ url('user/catatan-surat/'.$row->id_surat) }}" class="btn mb-2 btn-outline-success"><span class="fe fe-activity fe-16 mr-1"></span>Progres</a>
+                                                <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                            @else
+                                                <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd-{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
+                                                <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                            @endif
+
+                                        {{-- Level Kasi SIM --}}
+                                        @elseif((Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20) && Auth::user()->id_level == 6)
+                                            @if(empty($row->tindakan))
+                                                <button type="button" class="btn mb-2 btn-outline-info" data-toggle="modal" data-target="#edit-{{ $row->id_surat }}"><span class="fe fe-chevron-right fe-16 mr-1"></span>Tindak Lanjut</button>
+                                                <a href="{{ url('user/catatan-surat/'.$row->id_surat) }}" class="btn mb-2 btn-outline-success"><span class="fe fe-activity fe-16 mr-1"></span>Progres</a>
+                                                <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                            @else
+                                                <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd-{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
+                                                <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                            @endif
+                                        @endif
+
+                                    @elseif(empty($row->ttd3))
+                                        @if((Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20) && Auth::user()->id_level == 6)
+                                            <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" data-target="#ttd-{{ $row->id_surat }}" data-id="{{ $row->id_surat }}"><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
+                                            <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                        @else
+                                            <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" disabled><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
+                                            <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
+                                        @endif
+
+                                    @else
+                                        <button type="button" class="btn mb-2 btn-outline-primary" data-toggle="modal" disabled><span class="fe fe-edit fe-16 mr-1"></span>Tanda Tangan</button>
+                                        <a href="{{ url('exportlaporan/'.$row->id_surat) }}" class="btn mb-2 btn-outline-warning"><span class="fe fe-file fe-16 mr-1"></span>Eksport</a>
                                     @endif
                                 </td>
                               </tr>
+                                @php
+                                    $tabel = 'organisasi';
+                                    $organisasi = $row->id_organisasi;
+                                    $software = App\Models\Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                                        ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                                        ->select('surat.*', 'surat.id as id_surat','macam.*', 'macam.nama as macam')
+                                        ->where('macam.nama', 'Software')
+                                        ->where('organisasi.id', $row->id_organisasi)
+                                        ->orwhere('organisasi.id_parent', $row->id_organisasi)
+                                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $organisasi){
+                                            $query->select('organisasi.id')
+                                                ->from($tabel)
+                                                ->where('macam.nama', 'Software')
+                                                ->orwhere('organisasi.id_parent', $organisasi);
+                                            })
+                                        ->count();
+
+                                    $hardware = App\Models\Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                                        ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                                        ->select('surat.*', 'surat.id as id_surat', 'macam.*', 'macam.nama as macam')
+                                        ->where('macam.nama', 'Hardware')
+                                        ->where('organisasi.id', $row->id_organisasi)
+                                        ->orwhere('organisasi.id_parent', $row->id_organisasi)
+                                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $organisasi){
+                                            $query->select('organisasi.id')
+                                                ->from($tabel)
+                                                ->where('macam.nama', 'Hardware')
+                                                ->orwhere('organisasi.id_parent', $organisasi);
+                                            })
+                                        ->count();
+
+                                    $jaringan = App\Models\Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                                        ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                                        ->select('surat.*', 'surat.id as id_surat', 'macam.*', 'macam.nama as macam')
+                                        ->where('macam.nama', 'Jaringan')
+                                        ->where('organisasi.id', $row->id_organisasi)
+                                        ->orwhere('organisasi.id_parent', $row->id_organisasi)
+                                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $organisasi){
+                                            $query->select('organisasi.id')
+                                                ->from($tabel)
+                                                ->where('macam.nama', 'Jaringan')
+                                                ->orwhere('organisasi.id_parent', $organisasi);
+                                            })
+                                        ->count();
+                                @endphp
                               @endforeach
                             </tbody>
                           </table>
+                          {{-- <div class="col">
+                            <span class="mr-3"> Software : {{ $software }}</span>
+                            <span class="mr-3"> Hardware : {{ $hardware }}</span>
+                            <span class="mr-3"> Jaringan : {{ $jaringan }} </span>
+                          </div> --}}
                     </div>
-                    <nav aria-label="Table Paging" class="my-3">
-                      <ul class="pagination justify-content-end mb-0">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                      </ul>
-                    </nav>
+                    {{ $surat->links('vendor.pagination.bootstrap-4') }}
                   </div>
                 </div> <!-- Bordered table -->
             </div> <!-- .row -->
@@ -257,8 +337,75 @@
 @endsection
 
 @foreach ($surat as $row)
+<div class="modal fade" id="konfirmasi{{ $row->id_surat }}" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="varyModalLabel">Konfirmasi Surat</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" action="{{ url('konfirmasi-surat') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                {{-- @method('delete') --}}
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" name="id_surat" id="id" value="{{ $row->id_surat }}">
+                            <input type="hidden" class="form-control" name="ttd1" id="ttd1" value="{{ Auth::user()->id }}">
+                            <h3>Apakah Anda Yakin Konfirmasi Surat ?</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn mb-2 btn-primary">Ya</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+@endforeach
+
+@foreach ($surat as $row)
+<div class="modal fade" id="ttd-{{ $row->id_surat }}" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true" data-id="{{ $row->id_surat }}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="varyModalLabel">Tanda Tangan Pelaksanaan Surat</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" action="{{ url('ttd-surat') }}" method="post" enctype="multipart/form-data">
+                @csrf
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" name="id_surat" id="id" value="{{ $row->id_surat }}">
+                            {{-- <input type="hidden" class="form-control" name="ttd2" id="ttd2" value="{{ Auth::user()->id }}"> --}}
+                            <h3>Apakah Anda Yakin Surat Sudah Ditindaklanjuti ?</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn mb-2 btn-primary">Ya</button>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+@endforeach
+
+{{-- @foreach ($surat as $row) --}}
 {{-- <div class="modal fade " id="ttd" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true" data-id="{{ $row->id_surat }}" value="{{ $row->id_surat }}"> --}}
-<div class="modal fade" id="ttd{{ $row->id_surat }}" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true" data-id="{{ $row->id_surat }}">
+{{-- <div class="modal fade" id="ttd{{ $row->id_surat }}" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true" data-id="{{ $row->id_surat }}">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -289,8 +436,8 @@
         </div>
       </div>
     </div>
-</div>
-@endforeach
+</div> --}}
+{{-- @endforeach --}}
 
 @foreach ($surat as $row)
 <div class="modal fade bd-example-modal-lg" id="edit-{{ $row->id_surat }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">

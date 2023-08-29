@@ -60,7 +60,7 @@
                         <a class="nav-link pl-3" href="{{ url('super/surat-masuk') }}"><span class="ml-1 item-text">Surat Masuk</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link pl-3" href="{{ url('super/surat-masuk') }}"><span class="ml-1 item-text">History Surat</span></a>
+                        <a class="nav-link pl-3" href="{{ url('surat/history') }}"><span class="ml-1 item-text">History Surat</span></a>
                     </li>
                     @elseif (Auth::user()->id_level == 6)
                         @if(Auth::user()->id_organisasi == 12 or Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20)
@@ -68,41 +68,51 @@
                             <a class="nav-link pl-3" href="{{ url('super/surat-masuk') }}"><span class="ml-1 item-text">Surat Masuk</span></a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link pl-3" href="{{ url('user/history') }}"><span class="ml-1 item-text">History Surat</span></a>
+                            <a class="nav-link pl-3" href="{{ url('surat/history') }}"><span class="ml-1 item-text">History Surat</span></a>
                         </li>
                         @else
                         <li class="nav-item active">
                             <a class="nav-link pl-3" href="{{ url('user/surat-perbaikan') }}"><span class="ml-1 item-text">Surat Perbaikan</span></a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link pl-3" href="{{ url('user/history') }}"><span class="ml-1 item-text">History Surat</span></a>
+                            <a class="nav-link pl-3" href="{{ url('surat/history') }}"><span class="ml-1 item-text">History Surat</span></a>
                         </li>
                         @endif
-                    @elseif (Auth::user()->id_level == 10)
+                    @elseif (Auth::user()->id_level == 10 or Auth::user()->id_level == 9)
                         @if(Auth::user()->id_organisasi == 12 or Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20)
                         <li class="nav-item active">
                             <a class="nav-link pl-3" href="{{ url('super/surat-masuk') }}"><span class="ml-1 item-text">Surat Masuk</span></a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link pl-3" href="{{ url('user/history') }}"><span class="ml-1 item-text">History Surat</span></a>
+                            <a class="nav-link pl-3" href="{{ url('surat/history') }}"><span class="ml-1 item-text">History Surat</span></a>
                         </li>
                         @else
                         <li class="nav-item active">
                             <a class="nav-link pl-3" href="{{ url('user/surat-perbaikan') }}"><span class="ml-1 item-text">Surat Perbaikan</span></a>
                         </li>
                         <li class="nav-item active">
-                            <a class="nav-link pl-3" href="{{ url('user/history') }}"><span class="ml-1 item-text">History Surat</span></a>
+                            <a class="nav-link pl-3" href="{{ url('surat/history') }}"><span class="ml-1 item-text">History Surat</span></a>
                         </li>
                         @endif
+                    @elseif(Auth::user()->id_level == 10)
+                    <li class="nav-item active">
+                        <a class="nav-link pl-3" href="{{ url('user/surat-perbaikan') }}"><span class="ml-1 item-text">Surat Perbaikan</span></a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link pl-3" href="{{ url('surat/history') }}"><span class="ml-1 item-text">History Surat</span></a>
+                    </li>
                     @else
                     <li class="nav-item active">
                         <a class="nav-link pl-3" href="{{ url('user/surat-perbaikan') }}"><span class="ml-1 item-text">Surat Perbaikan</span></a>
                     </li>
                     <li class="nav-item active">
+                        <a class="nav-link pl-3" href="{{ url('surat/history-perbaikan') }}"><span class="ml-1 item-text">History Surat Perbaikan</span></a>
+                    </li>
+                    <li class="nav-item active">
                         <a class="nav-link pl-3" href="{{ url('user/surat-masuk') }}"><span class="ml-1 item-text">Surat Masuk</span></a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link pl-3" href="{{ url('user/history') }}"><span class="ml-1 item-text">History Surat</span></a>
+                        <a class="nav-link pl-3" href="{{ url('surat/history') }}"><span class="ml-1 item-text">History Surat Masuk</span></a>
                     </li>
                     @endif
                 </ul>

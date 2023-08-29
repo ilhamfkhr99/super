@@ -15,7 +15,6 @@
         <link rel="stylesheet" href="{{ asset('light/css/simplebar.css') }}">
 </head>
 
-
 <body>
     <div class="row" >
         <div class="col-md-12">
@@ -87,6 +86,18 @@
                             </tr>
                         </tbody>
                 </table>
+                <table class="table table-bordered" style="border:solid" >
+                        <thead>
+                            <tr>
+                                <th style="font-family: Trebuchet MS;border:solid" scope="col"><font size="2">Tindakan Perbaikan diuraikan oleh petugas SIM:</font></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="font-family: Trebuchet MS;border:solid" scope="col"><font size="2"><textarea style="border: 0">{{ $row->tindakan }}</textarea></td></font>
+                            </tr>
+                        </tbody>
+                </table>
                 <table class="table table-bordered" style="border:solid">
                         <thead>
                             <tr>
@@ -106,27 +117,38 @@
                                     <br>- Lembar kuning untuk Arsip
                                     </font>
                                 </td>
-                                @php
-                                    $organisasi = App\Models\Organisasi::whereIn('id', [18,19,20])->get();
-                                    $kasi = App\Models\Organisasi::where('id', 12)->first();
-                                    $id = App\Models\Organisasi::where('id', 10)->first();
-                                    // $tangan = App\Models\Ttd::join('users', 'users.id', '=', 'ttd.id_user')
-                                    //     ->select('ttd.*','users.*')
-                                    //     ->where('ttd.id_surat', $row->id)
-                                    //     ->first();
-                                    // dd($tangan);
-                                @endphp
-                                @foreach ($tanda as $val)
-                                    @if ($val->id_organisasi == 18 or $val->id_organisasi == 19 or $val->id_organisasi == 20)
-                                        <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col"><font size="2"><img src="{{ asset('signatures/'.$val->tanda_tangan) }}" width="100px"><br>({{ $val->nama }})</font></td>
-                                    @elseif ($val->id_organisasi == 18 or $val->id_organisasi == 19 or $val->id_organisasi == 20)
-                                        <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col"><font size="2"><br>({{ $val->nama }})</font></td>
-                                    @elseif($val->id_organisasi == 12)
-                                        <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col"><font size="2"><img src="{{ asset('signatures/'.$val->tanda_tangan) }}" width="100px"><br>({{ $val->nama }})</font></td>
-                                    @elseif ($val->id_organisasi != 18 && $val->id_organisasi != 19 && $val->id_organisasi != 20 && $val->id_organisasi != 12)
-                                        <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col"><font size="2"><img src="{{ asset('signatures/'.$val->tanda_tangan) }}" width="100px"><br>({{ $val->nama }})</font></td>
-                                    @endif
-                                @endforeach
+                                    <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col">
+                                        <font size="2">
+                                            @foreach ($ttda as $val)
+                                            <img src="{{ asset('signatures/'.$val->tanda_tangan) }}" height="40px" width="100px">
+                                            <br>{{ $val->nama }}
+                                            @endforeach
+                                        </font>
+                                    </td>
+                                    <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col">
+                                        <font size="2">
+                                            @foreach ($ttdb as $val)
+                                            <img src="{{ asset('signatures/'.$val->tanda_tangan) }}" height="40px" width="100px">
+                                            <br>{{ $val->nama }}
+                                            @endforeach
+                                        </font>
+                                    </td>
+                                    <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col">
+                                        <font size="2">
+                                            @foreach ($ttdc as $val)
+                                            <img src="{{ asset('signatures/'.$val->tanda_tangan) }}" height="40px" width="100px">
+                                            <br>{{ $val->nama }}
+                                            @endforeach
+                                        </font>
+                                    </td>
+                                    <td style="font-family: Trebuchet MS;border:solid;text-align:center;" scope="col">
+                                        <font size="2">
+                                            @foreach ($ttdd as $val)
+                                            <img src="{{ asset('signatures/'.$val->tanda_tangan) }}" height="40px" width="100px">
+                                            <br>{{ $val->nama }}
+                                            @endforeach
+                                        </font>
+                                    </td>
                             </tr>
                         </tbody>
                 </table>
@@ -152,11 +174,11 @@
                                     @endif
                                     @endforeach
                                 </td>
-                                @foreach ($tangan as $val)
-                                    {{-- @if ($val->id_organisasi != 18 && $val->id_organisasi != 19 && $val->id_organisasi && 20 && $val->id_organisasi != 12) --}}
-                                        <td style="font-family: Trebuchet MS;border:solid;text-align:center" scope="col"><font size="2"><img src="{{ url('signatures/'.$val->tanda_tangan) }}" height="100px"><br>( {{ $val->nama }} )</font></td>
-                                    {{-- @endif --}}
-                                @endforeach
+                                    <td style="font-family: Trebuchet MS;border:solid;text-align:center;align:middle" scope="col">
+                                        @foreach ($ttde as $val)
+                                            <img src="{{ asset('signatures/'.$val->tanda_tangan) }}" width="250px"><br><br>{{ $val->nama }}
+                                        @endforeach
+                                    </td>
                             </tr>
                         </tbody>
                 </table>

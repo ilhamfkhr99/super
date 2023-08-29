@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Surat;
 use App\Models\Ttd;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,9 +15,9 @@ class TtdController extends Controller
         $this->middleware('auth');
     }
 
-    public function upload(Request $request, $id)
+    public function upload(Request $request)
     {
-        $surat = Surat::where('id', $id)->first();
+        // $surat = Surat::where('id', $id)->first();
         $folderPath = public_path('signatures/');
 
         $image_parts = explode(";base64,", $request->tanda_tangan);
@@ -32,11 +33,15 @@ class TtdController extends Controller
         $file = $folderPath . $tanda_tangan;
         file_put_contents($file, $image_base64);
 
-        $ttd = new Ttd();
-        $ttd->id_user = Auth::user()->id;
-        $ttd->id_surat = $surat->id;
-        $ttd->tanda_tangan = $tanda_tangan;
-        $ttd->save();
+        // $ttd = new Ttd();
+        // $ttd->id_user = Auth::user()->id;
+        // $ttd->id_surat = $surat->id;
+        // $ttd->tanda_tangan = $tanda_tangan;
+        // $ttd->save();
+        User::where('id', Auth::user()->id)
+        ->update([
+            'tanda_tangan' => $tanda_tangan
+        ]);
 
         // Super Admin
         if(Auth::user()->id_level == 8)

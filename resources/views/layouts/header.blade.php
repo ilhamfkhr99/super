@@ -36,6 +36,7 @@
           <a class="dropdown-item" href="#">{{ $level->level }}</a>
           <a class="dropdown-item" href="#">{{ $bidang->nama }}</a>
           <a class="dropdown-item" href="#">Activities</a>
+          <a class="dropdown-item" href="{{ route('profil') }}">Profil</a>
         </div>
       </li>
     </ul>

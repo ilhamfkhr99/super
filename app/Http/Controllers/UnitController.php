@@ -9,6 +9,7 @@ use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class UnitController extends Controller
 {
@@ -19,8 +20,10 @@ class UnitController extends Controller
 
     public function index()
     {
-        $bidang = Organisasi::orderBy('id', 'asc')->orderBy('id_parent', 'asc')->get();
-        return view('super.master.bidang', compact('bidang'));
+        $bidang = Organisasi::orderBy('id')->paginate(20);
+        // $bidang = Organisasi::paginate(10);
+        $unit = Organisasi::all();
+        return view('super.master.bidang', compact('bidang', 'unit'));
     }
     public function unit(Request $request, $id)
     {
@@ -31,7 +34,7 @@ class UnitController extends Controller
     public function tambah_unit (Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'nama'      => ['required'],
+            'nama'      => ['required', 'unique:organisasi,nama'],
         ]);
 
         if($validator->fails())
@@ -40,21 +43,34 @@ class UnitController extends Controller
             return redirect('super/unit/'.$id);
 
         }else{
-            if(Organisasi::where('nama', '=', $request->nama)->exists())
+            $cek_unit = new Organisasi();
+            $cek_unit = Organisasi::where('nama', $request->nama)->get();
+            // dd($cek_unit);
+
+            $unit =  new Organisasi;
+            $unit->id_parent   = $id;
+            $unit->nama        = $request->nama;
+
+
+            if(count($cek_unit) > 1)
             {
-                toast('Unit Sudah Ada!','error');
-                return redirect('super/unit/'.$id);
+                foreach($cek_unit as $data){
+                    if($request->nama == $data->nama)
+                    {
+                        toast('Unit Sudah Ada!','error');
+                        return redirect('super/unit/'.$id);
+                    }
+                }
 
             }else{
-
-                $unit = new Organisasi();
-                $unit->id_parent   = $id;
-                $unit->nama        = $request->nama;
                 $unit->save();
 
                 toast('Data Berhasil ditambahkan!','success');
                 return redirect('super/unit/'.$id);
             }
+            // else{
+
+            // }
         }
     }
     public function edit_unit(Request $request, $id)
@@ -69,12 +85,12 @@ class UnitController extends Controller
             return redirect('super/unit/'.$id);
 
         }else{
-            if(Organisasi::where('nama', '=', $request->nama)->exists())
-            {
-                toast('Unit Sudah Ada!','error');
-                return redirect('super/unit/'.$id);
+            // if(Organisasi::where('nama', '=', $request->nama)->exists())
+            // {
+            //     toast('Unit Sudah Ada!','error');
+            //     return redirect('super/unit/'.$id);
 
-            }else{
+            // }else{
                 Organisasi::where('id', $request->id)
                 ->update([
                     'id_parent' => $id,
@@ -83,7 +99,7 @@ class UnitController extends Controller
 
                 toast('Data Berhasil diupdate!','success');
                 return redirect('super/unit/'.$id);
-            }
+            // }
         }
     }
 

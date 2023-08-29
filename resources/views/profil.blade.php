@@ -1,71 +1,71 @@
 @extends('layouts.main')
-@section('title', 'beranda')
+@section('title', 'Data Bidang')
 @section('content')
 <main role="main" class="main-content">
     <div class="container-fluid">
       <div class="row justify-content-center">
         <div class="col-12">
-            <h2 class="h5 page-title">Dashboard</h2><br>
-            @if (Auth::user()->id_organisasi == 12 or Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20)
-            <div class="row">
-                @foreach ($organisasi as $row)
-                    <div class="col-lg-3 col-6 mb-4">
-                        <div class="card shadow border-0">
-                        <div class="card-body">
-                            <div class="row align-items-center my-3">
-                            <div class="col-3 text-center">
-                                <i class="fe fe-32 fe-mail text-primary mb-0"></i>
-                            </div>
-                            <div class="col pr-0">
-                                <span class="h5 mb-0">{{ $row->nama }}</span>
-                            </div>
+          <h2 class="page-title">Profil</h2>
+          <div class="card shadow mb-4">
+            <div class="card-body">
+            @foreach ($profil as $row)
+                <form class="form-horizontal" action="{{ url('super/ttd') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="nama" class="form-label"><strong>Nama</strong></label>
+                                <input type="hidden" class="form-control" name="id" id="id" value="{{ $row->id_user }}">
+                                <input type="text" class="form-control" name="nama" id="nama" value="{{ $row->nama_user }}" readonly>
                             </div>
                         </div>
-                        @php
-                            $parent = App\Models\Organisasi::where('id', Auth::user()->id_organisasi)->first();
-                        @endphp
-                        @if(session('id') == $row->id)
-                            <a href="{{ url('super/beranda/'.$row->id.'/'.$row->nama) }}" class="btn mb-2 btn-primary" ><span class="fe fe-arrow-right-circle fe-16 mr-2"></span>Pilih</a>
-                        @else
-                            <a href="{{ url('super/beranda/'.$row->id.'/'.$row->nama) }}" class="btn mb-2 btn-outline-primary" ><span class="fe fe-arrow-right-circle fe-16 mr-2"></span>Pilih</a>
-                        @endif
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email" class="form-label"><strong>Email</strong></label>
+                                <input type="text" class="form-control" name="email" id="email" value="{{ $row->email }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="level" class="form-label"><strong>Level</strong></label>
+                                <select class="edit-level form-control" name="id_level" id="id_level-edit" readonly>
+                                    @foreach ($level as $val)
+                                        <option value="{{ $val->id }}" {{ ($val->id == $row->id_level) ? 'selected' : '' }}>{{ $val->level }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="level" class="form-label"><strong>Bidang / Unit /Ruangan</strong></label>
+                                <select name="id_organisasi" id="id_bidang-edit" class="form-control edit-bidang" readonly>
+                                    @foreach ($bidang as $val)
+                                        <option value="{{ $val->id }}" {{ ($val->id == $row->id_organisasi) ? 'selected' : '' }} >{{ $val->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group" style="align: center">
+                                <label for="password" class="form-label"><strong>Tanda Tangan</strong></label>
+                                <div id="sig" class="sig">{{ $row->tanda_tangan }}</div>
+                                <textarea id="signature64" name="tanda_tangan" style="display:none" class="signature64"></textarea>
+                                <br/>
+                                <button id="clear" class="btn btn-danger clear">Clear</button>
+                                {{-- <button type="submit" class="btn btn-success">Simpan</button> --}}
+                            </div>
                         </div>
                     </div>
-                @endforeach
-            @else
-            {{-- @foreach ($organisasi as $row)
-                <div class="col-lg-3 col-6 mb-4">
-                    <div class="card shadow border-0">
-                    <div class="card-body">
-                        <div class="row align-items-center my-3">
-                        <div class="col-3 text-center">
-                            <i class="fe fe-32 fe-mail text-primary mb-0"></i>
-                        </div>
-                        <div class="col pr-0">
-                            <span class="h5 mb-0">{{ $row->nama }}</span>
-                        </div>
-                        </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-danger" style="margin: 0;position: relative; left: 88%;">Batal</button>
+                        <button type="submit" class="btn btn-success" style="margin: 0;position: relative; left: 88%;">Simpan</button>
                     </div>
-                    @php
-                        $parent = App\Models\Organisasi::where('id', Auth::user()->id_organisasi)->first();
-                    @endphp
-                    @if(session('id') == $row->id)
-                        <a href="{{ url('super/beranda/'.$row->id.'/'.$row->nama) }}" class="btn mb-2 btn-primary" ><span class="fe fe-arrow-right-circle fe-16 mr-2"></span>Pilih</a>
-                    @else
-                        <a href="{{ url('super/beranda/'.$row->id.'/'.$row->nama) }}" class="btn mb-2 btn-outline-primary" ><span class="fe fe-arrow-right-circle fe-16 mr-2"></span>Pilih</a>
-                    @endif
-                    </div>
-                </div>
-            @endforeach --}}
-          </div> <!-- end section -->
-          <div class="row">
-            <canvas id="myChart" height="100px"></canvas>
-            {{-- <canvas id="lineChartjs" width="400" height="300"></canvas> --}}
-          </div>
-          @endif
-        </div>
-      </div> <!-- .row -->
+                </form>
+            @endforeach
+            </div>
+          </div> <!-- / .card -->
     </div> <!-- .container-fluid -->
+    @include('sweetalert::alert')
     <div class="modal fade modal-notif modal-slide" tabindex="-1" role="dialog" aria-labelledby="defaultModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
@@ -188,34 +188,6 @@
           </div>
         </div>
       </div>
-      @include('sweetalert::alert')
     </div>
-</main> <!-- main -->
+  </main> <!-- main -->
 @endsection
-{{-- <script type="text/javascript">
-
-    var labels =  {{ Js::from($labels) }};
-    var users =  {{ Js::from($data) }};
-
-    const data = {
-        labels: labels,
-        datasets: [{
-            label: 'My First dataset',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: users,
-        }]
-    };
-
-    const config = {
-        type: 'line',
-        data: data,
-        options: {}
-    };
-
-    const myChart = new Chart(
-        document.getElementById('#myChart'),
-        config
-    );
-
-</script> --}}

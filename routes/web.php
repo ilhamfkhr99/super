@@ -41,6 +41,7 @@ Route::get('/', function () {
 Auth::routes();
 Route::get('/beranda', [HomeController::class, 'beranda'])->name('beranda');
 Route::get('super/beranda/{id}/{nama}', [HomeController::class, 'pilih_bidang'])->name('pilih-bidang');
+Route::get('/profile', [HomeController::class, 'profil'])->name('profil');
 // Route::get('super/beranda/{id}', [HomeController::class, 'pilih_bidang'])->name('pilih-bidang');
 
 Route::get('super/level', [LevelController::class, 'level'])->name('level');
@@ -75,7 +76,7 @@ Route::delete('super/hapus-kondisi/{id}', [MasterController::class, 'hapus_kondi
 
 Route::get('super/surat-masuk', [SuratController::class, 'surat_perbaikan'])->name('surat-perbaikan');
 Route::post('super/tindaklanjut-surat', [SuratController::class, 'tindaklanjut_surat'])->name('tindaklanjut-surat');
-Route::post('super/ttd/{id}', [TtdController::class, 'upload'])->name('upload-ttd');
+Route::post('super/ttd', [TtdController::class, 'upload'])->name('upload-ttd');
 // Route::get('/exportlaporan', [LaporanController::class, 'export']);
 Route::get('exportlaporan/{id}', [LaporanController::class, 'export']);
 
@@ -87,6 +88,12 @@ Route::delete('user/hapus-surat/{id}', [SuratController::class, 'hapus_surat'])-
 Route::get('user/catatan-surat/{id}', [SuratController::class, 'catatan_surat'])->name('catatan-surat');
 Route::post('user/tambah-catatan/{id}', [SuratController::class, 'tambah_catatan'])->name('tambah_catatan');
 Route::post('user/edit-catatan/{id}', [SuratController::class, 'edit_catatan'])->name('edit_catatan');
+Route::post('konfirmasi-surat', [SuratController::class, 'konfirmasi'])->name('konfirmasi-surat');
+Route::post('ttd-surat', [SuratController::class, 'ttd_surat'])->name('ttd-surat');
+Route::post('terima-surat', [SuratController::class, 'terima_surat'])->name('terima-surat');
+
+Route::get('surat/history/', [SuratController::class, 'history'])->name('history');
+Route::get('surat/history-perbaikan/', [SuratController::class, 'history_perbaikan'])->name('history-perbaikan');
 
 
 

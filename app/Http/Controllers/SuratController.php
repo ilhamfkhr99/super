@@ -31,6 +31,7 @@ class SuratController extends Controller
 
         $bidang = Organisasi::select('id', 'nama')->where('id', Auth::user()->id_organisasi)->first();
         $unit = Organisasi::select('id', 'nama', 'id_parent')->where('id_parent', Auth::user()->id_organisasi)->first();
+        // Level Kabag
         if(Auth::user()->id_level == 4)
         {
             $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
@@ -42,10 +43,43 @@ class SuratController extends Controller
                         // ->Where('surat.id_user', Auth::user()->id)
                         ->Where('organisasi.id', $bidang->id)
                         ->orderBy('surat.waktu')
-                        ->get();
+                        // ->get();
+                        ->paginate(10);
 
             return view('user/surat/surat-perbaikan', compact('surat', 'macam', 'kondisi'));
 
+            // Level Kasi
+        }elseif(Auth::user()->id_level == 6){
+            $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+            ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+            ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
+            ->join('users', 'users.id', '=', 'surat.id_user')
+            ->select('surat.*', 'surat.id as id_surat','users.*', 'macam.*', 'macam.nama as macam',
+                    'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+            // ->where('surat.id_user', Auth::user()->id)
+            ->where('organisasi.id', Auth::user()->id_organisasi)
+            ->orderBy('surat.waktu')
+            // ->get();
+            ->paginate(10);
+
+            return view('user/surat/surat-perbaikan', compact('surat', 'macam', 'kondisi'));
+
+            // Level Karu
+        }elseif(Auth::user()->id_level == 7){
+            $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                    ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                    ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
+                    ->join('users', 'users.id', '=', 'surat.id_user')
+                    ->select('surat.*', 'surat.id as id_surat','users.*', 'macam.*', 'macam.nama as macam',
+                            'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+                    // ->where('surat.id_user', Auth::user()->id)
+                    ->where('organisasi.id', Auth::user()->id_organisasi)
+                    ->orderBy('surat.waktu')
+                    // ->get();
+                    ->paginate(10);
+
+                    return view('user/surat/surat-perbaikan', compact('surat', 'macam', 'kondisi'));
+            // level Kanit
         }elseif(Auth::user()->id_level == 5){
 
             $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
@@ -57,7 +91,8 @@ class SuratController extends Controller
                     // ->where('surat.id_user', Auth::user()->id)
                     ->where('organisasi.id', Auth::user()->id_organisasi)
                     ->orderBy('surat.waktu')
-                    ->get();
+                    // ->get();
+                    ->paginate(10);
 
                     return view('user/surat/surat-perbaikan', compact('surat', 'macam', 'kondisi'));
 
@@ -71,7 +106,8 @@ class SuratController extends Controller
                             'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
                     ->where('surat.id_user', Auth::user()->id)
                     ->orderBy('surat.waktu')
-                    ->get();
+                    // ->get();
+                    ->paginate(10);
 
                     return view('user/surat/surat-perbaikan', compact('surat', 'macam', 'kondisi'));
             }
@@ -108,7 +144,7 @@ class SuratController extends Controller
                             ->where('organisasi.id_parent', $id);
                     })
                     ->orderBy('surat.waktu')
-                    ->get();
+                    ->paginate(10);
 
                     return view('super/surat/surat-masuk', compact('surat', 'macam'));
             }else{
@@ -118,7 +154,7 @@ class SuratController extends Controller
 
         // Level Kepala Bagian
         }elseif(Auth::user()->id_level == 4) {
-            if(session('id') <> "")
+            if(session('id') <> "" )
             {
                 $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
                     ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
@@ -130,7 +166,7 @@ class SuratController extends Controller
                     ->Where('organisasi.id', $request->session()->get('id'))
                     ->orWhere('organisasi.id_parent', $request->session()->get('id'))
                     ->orderBy('surat.waktu')
-                    ->get();
+                    ->paginate(10);
 
                     return view('user/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
             }else{
@@ -160,9 +196,9 @@ class SuratController extends Controller
                                 ->where('organisasi.id_parent', $id);
                         })
                         ->orderBy('surat.waktu')
-                        ->get();
+                        ->paginate(10);
 
-                        return view('super/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
+                        return view('super/surat/surat-masuk', compact('surat', 'macam', 'kondisi', 'id'));
 
                  }else{
                     toast('Unit Belum Dipilih','error','top-right');
@@ -179,7 +215,7 @@ class SuratController extends Controller
                     ->where('organisasi.id', $bidang->id)
                     ->where('users.id_level', '!=', 5)
                     ->orderBy('surat.waktu')
-                    ->get();
+                    ->paginate(10);
 
                     return view('user/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
             }
@@ -197,7 +233,7 @@ class SuratController extends Controller
                     ->where('organisasi.id', $bidang->id)
                     ->where('users.id_level', '!=', 5)
                     ->orderBy('surat.waktu')
-                    ->get();
+                    ->paginate(10);
 
                     return view('user/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
             }else{
@@ -209,21 +245,14 @@ class SuratController extends Controller
                         ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
                         ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
                         ->join('users', 'users.id', '=', 'surat.id_user')
-                        ->join('ttd', 'surat.id', '=', 'ttd.id_surat')
                         ->select('surat.*', 'surat.id as id_surat', 'users.*', 'users.nama as nama_user','macam.*', 'macam.nama as macam',
-                                'kondisi_barang.*', 'kondisi_barang.nama as kondisi', 'ttd.*', 'ttd.id as id_ttd')
-                        ->where('organisasi.id', $id)
-                        ->orwhere('organisasi.id_parent', $id)
-                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $id){
-                            $query->select('organisasi.id')
-                                ->from($tabel)
-                                ->where('organisasi.id_parent', $id);
-                        })
+                                'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+                        ->where('organisasi.id', $request->session()->get('id'))
+                        ->orWhere('organisasi.id_parent', $request->session()->get('id'))
                         ->orderBy('surat.waktu')
-                        ->get();
+                        ->paginate(10);
 
-                            return view('super/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
-
+                            return view('user/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
                  }else{
                     toast('Unit Belum Dipilih','error','top-right');
                     return redirect('/beranda');
@@ -231,7 +260,7 @@ class SuratController extends Controller
             }
 
             // Level Karyawan
-        }elseif(Auth::user()->id_level == 10){
+        }elseif(Auth::user()->id_level == 10 or Auth::user()->id_level == 9){
             if(Auth::user()->id_organisasi == 12 or Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20)
             {
                 if(session('id') <> "")
@@ -241,7 +270,6 @@ class SuratController extends Controller
                         ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
                         ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
                         ->join('users', 'users.id', '=', 'surat.id_user')
-                        // ->join('ttd', 'ttd.id_surat', '=', 'surat.id')
                         ->select('surat.*', 'surat.id as id_surat','users.*', 'users.nama as nama_user', 'macam.*', 'macam.nama as macam',
                                 'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
                         ->where('organisasi.id', $request->session()->get('id'))
@@ -252,7 +280,8 @@ class SuratController extends Controller
                                 ->where('organisasi.id_parent', $id);
                         })
                         ->orderBy('surat.waktu')
-                        ->get();
+                        // ->get();
+                        ->paginate(10);
 
                         return view('super/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
 
@@ -271,9 +300,36 @@ class SuratController extends Controller
                     ->where('organisasi.id', $bidang->id)
                     ->where('users.id_level', '!=', 5)
                     ->orderBy('surat.waktu')
-                    ->get();
+                    ->paginate(10);
+                    // ->get();
 
                     return view('user/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
+            }
+        }elseif(Auth::user()->id_level == 7){
+            if(session('id') <> "")
+            {
+                $id = $request->session()->get('id');
+                $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                    ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                    ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
+                    ->join('users', 'users.id', '=', 'surat.id_user')
+                    ->select('surat.*', 'surat.id as id_surat','users.*', 'users.nama as nama_user', 'macam.*', 'macam.nama as macam',
+                            'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+                    ->where('organisasi.id', $request->session()->get('id'))
+                    ->orwhere('organisasi.id_parent', $request->session()->get('id'))
+                    ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $id){
+                        $query->select('organisasi.id')
+                            ->from($tabel)
+                            ->where('organisasi.id_parent', $id);
+                    })
+                    ->orderBy('surat.waktu')
+                    ->paginate(10);
+
+                    return view('user/surat/surat-masuk', compact('surat', 'macam', 'kondisi'));
+
+            }else{
+                toast('Unit Belum Dipilih','error','top-right');
+                return redirect('/beranda');
             }
         }
 
@@ -336,7 +392,6 @@ class SuratController extends Controller
 
     public function ajukan_surat(Request $request)
     {
-        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'jenis_pemeliharaan' => ['required'],
             'kerusakan'          => ['required'],
@@ -363,9 +418,6 @@ class SuratController extends Controller
             $surat->save();
 
             if ($request->hasFile('file')) {
-                    // $fileimage   = $request->getClientOriginalName();
-                    // $upload_path = 'bukti';
-                    // $request->move($upload_path, $fileimage);
 
                     $fileimage = $request->file('file');
                     $ext = $fileimage->getClientOriginalExtension();
@@ -443,7 +495,7 @@ class SuratController extends Controller
                     'jenis_pemeliharaan'    => $request->jenis_pemeliharaan,
                     'kerusakan'             => $request->kerusakan,
                     'waktu'                 => date('Y-m-d H:i:s', strtotime($request->waktu)),
-                    'status'                => 'Menunggu',
+                    'status'                => 'Belum dikonfirmasi',
                     'lokasi'                => $request->lokasi,
                 ]);
 
@@ -483,6 +535,210 @@ class SuratController extends Controller
 
             toast('Surat Perbaikan Berhasil ditindaklanjut!','success');
             return redirect('user/surat-masuk');
+        }
+    }
+
+    public function konfirmasi(Request $request)
+    {
+        $user = User::where('id', Auth::user()->id)->first();
+        if(empty($user->tanda_tangan))
+        {
+            toast('Harap Isi Tanda Tangan', 'error');
+            return redirect('profile');
+        }else{
+            Surat::where('id', $request->id_surat)
+            ->update([
+                'status' => 'Telah dikonfirmasi',
+                'ttd1' => Auth::user()->id,
+            ]);
+            toast('Surat Berhasil dikonfirmasi', 'success');
+            return redirect('super/surat-masuk');
+        }
+    }
+
+    public function ttd_surat(Request $request)
+    {
+        $kosong = Surat::where('id', $request->id)->first();
+        $user = User::where('id', Auth::user()->id)->first();
+        if(empty($user->tanda_tangan))
+        {
+            toast('Harap Isi Tanda Tangan', 'error');
+            return redirect('profile');
+        }else{
+            if((Auth::user()->id_level == 6 && Auth::user()->id_organisasi == 18) or
+                (Auth::user()->id_level == 6 && Auth::user()->id_organisasi == 19) or
+                (Auth::user()->id_level == 6 && Auth::user()->id_organisasi == 20))
+                {
+                    Surat::where('id', $request->id_surat)
+                    ->update([
+                        'status' => 'Telah Diperbaiki',
+                        'ttd3' => $user->id,
+                    ]);
+                    toast('Surat Berhasil ditandatangani', 'success');
+                    return redirect()->back();
+
+                }else{
+                    Surat::where('id', $request->id_surat)
+                    ->update([
+                        'status' => 'Telah Diperbaiki',
+                        'ttd2' => $user->id,
+                    ]);
+                    toast('Surat Berhasil ditindaklanjuti', 'success');
+                    return redirect()->back();
+                }
+        }
+    }
+    public function terima_surat(Request $request)
+    {
+        $user = User::where('id', Auth::user()->id)->first();
+        $kosong = Surat::where('id', $request->id_surat)->first();
+        if(empty($user->tanda_tangan))
+        {
+            toast('Harap Isi Tanda Tangan', 'error');
+            return redirect('profile');
+        }else{
+            if(Auth::user()->id_organisasi != 18 or Auth::user()->id_organisasi != 19 or Auth::user()->id_organisasi != 20)
+            {
+                if($kosong->ttd4 != NULL)
+                {
+                    Surat::where('id', $request->id_surat)
+                    ->update([
+                        'status' => 'Selesai',
+                        'ttd5' => $user->id,
+                    ]);
+
+                    toast('Surat Berhasil ditandatangani', 'success');
+                    return redirect()->back();
+                }else{
+
+                    Surat::where('id', $request->id_surat)
+                    ->update([
+                        'status' => 'Selesai',
+                        'ttd4' => $user->id,
+                    ]);
+
+                    toast('Surat Berhasil ditandatangani', 'success');
+                    return redirect()->back();
+                }
+
+            }elseif(Auth::user()->id_level == 4 or Auth::user()->id_level == 5 or Auth::user()->id_level == 7 or
+                    (Auth::user()->id_level == 6 && (Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20) )
+                    ){
+                Surat::where('id', $request->id_surat)
+                ->update([
+                    'status' => 'Selesai',
+                    'ttd5' => $user->id,
+                ]);
+                toast('Surat Berhasil ditandatangani', 'success');
+                return redirect()->back();
+            }
+        }
+    }
+    public function history(Request $request)
+    {
+        $tabel = 'organisasi';
+        $macam = MacamPerbaikan::all();
+        $kondisi = KondisiBarang::all();
+        if(Auth::user()->id_organisasi == 12 or Auth::user()->id_organisasi == 18 or Auth::user()->id_organisasi == 19 or Auth::user()->id_organisasi == 20)
+        {
+            if(session('id') <> "")
+                {
+                    $id = $request->session()->get('id');
+                    $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                        ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                        ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
+                        ->join('users', 'users.id', '=', 'surat.id_user')
+                        ->select('surat.*', 'surat.id as id_surat','users.*', 'users.nama as nama_user', 'macam.*', 'macam.nama as macam',
+                                'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+                        ->where('organisasi.id', $request->session()->get('id'))
+                        ->where('surat.status', 'Selesai')
+                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $id){
+                            $query->select('organisasi.id')
+                                ->from($tabel)
+                                ->where('organisasi.id', $id)
+                                ->where('surat.status', 'Selesai');
+                        })
+                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $id){
+                            $query->select('organisasi.id')
+                                ->from($tabel)
+                                ->where('surat.status', 'Selesai')
+                                ->where('organisasi.id_parent', $id);
+                        })
+                        ->orderBy('surat.waktu')
+                        ->get();
+
+                        return view('super/surat/history', compact('surat', 'macam', 'kondisi'));
+
+                 }else{
+                    toast('Unit Belum Dipilih','error','top-right');
+                    return redirect('/beranda');
+                }
+        }elseif(Auth::user()->id_level == 10){
+            $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                        ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                        ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
+                        ->join('users', 'users.id', '=', 'surat.id_user')
+                        ->select('surat.*', 'surat.id as id_surat','users.*', 'users.nama as nama_user', 'macam.*', 'macam.nama as macam',
+                                'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+                        ->where('organisasi.id', Auth::user()->id_organisasi)
+                        ->where('surat.status', 'Selesai')
+                        ->orderBy('surat.waktu')
+                        ->get();
+
+                        return view('user/surat/history', compact('surat', 'macam', 'kondisi'));
+        }else{
+            if(session('id') <> "")
+            {
+                    $id = $request->session()->get('id');
+                    $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+                        ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+                        ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
+                        ->join('users', 'users.id', '=', 'surat.id_user')
+                        ->select('surat.*', 'surat.id as id_surat','users.*', 'users.nama as nama_user', 'macam.*', 'macam.nama as macam',
+                                'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+                        ->where('organisasi.id', $request->session()->get('id'))
+                        ->where('surat.status', 'Selesai')
+                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $id){
+                            $query->select('organisasi.id')
+                                ->from($tabel)
+                                ->where('organisasi.id', $id)
+                                ->where('surat.status', 'Selesai');
+                        })
+                        ->orWhereIn('organisasi.id_parent', function($query) use ($tabel, $id){
+                            $query->select('organisasi.id')
+                                ->from($tabel)
+                                ->where('surat.status', 'Selesai')
+                                ->where('organisasi.id_parent', $id);
+                        })
+                        ->orderBy('surat.waktu')
+                        ->get();
+
+                        return view('super/surat/history', compact('surat', 'macam', 'kondisi'));
+
+            }else{
+                toast('Unit Belum Dipilih','error','top-right');
+                return redirect('/beranda');
+            }
+        }
+    }
+    public function history_perbaikan(Request $request)
+    {
+        $macam = MacamPerbaikan::all();
+        $kondisi = KondisiBarang::all();
+        if(Auth::user()->id_level == 4 or Auth::user()->id_level == 5 or Auth::user()->id_level == 6 or Auth::user()->id_level == 7)
+        {
+            $surat = Surat::join('macam', 'macam.id', '=', 'surat.id_macam')
+            ->join('organisasi', 'organisasi.id', '=', 'surat.id_organisasi')
+            ->join('kondisi_barang', 'kondisi_barang.id', '=', 'surat.id_kondisi')
+            ->join('users', 'users.id', '=', 'surat.id_user')
+            ->select('surat.*', 'surat.id as id_surat','users.*', 'users.nama as nama_user', 'macam.*', 'macam.nama as macam',
+                    'kondisi_barang.*', 'kondisi_barang.nama as kondisi')
+            ->where('organisasi.id', Auth::user()->id_organisasi)
+            ->where('surat.status', 'Selesai')
+            ->orderBy('surat.waktu')
+            ->get();
+
+            return view('user/surat/history', compact('surat', 'macam', 'kondisi'));
         }
     }
 }

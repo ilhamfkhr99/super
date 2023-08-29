@@ -32,6 +32,7 @@ class UserController extends Controller
         $users = User::join('level', 'level.id', '=', 'users.id_level')
                 ->join('organisasi', 'organisasi.id', '=', 'users.id_organisasi')
                 ->select('users.*', 'users.id as id_user','users.nama as nama_user', 'organisasi.*', 'organisasi.nama as nama_unit', 'level.level')
+                ->orderBy('users.created_at')
                 ->get();
 
         // $users = User::join('level', 'level.id', '=', 'users.id_level')
@@ -46,7 +47,7 @@ class UserController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama'     => ['required', 'max:100'],
-            'email'    => ['required', 'email', 'max:100', 'unique:users'],
+            'email'    => ['required', 'email', 'max:100', 'unique:users,email'],
             'password' => ['required', 'min:8'],
         ]);
 

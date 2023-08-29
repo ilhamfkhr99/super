@@ -61,9 +61,10 @@
                           @php
                               $no = 1;
                           @endphp
-                          @foreach ($bidang as $row)
+                          @foreach ($bidang as $key => $row)
                           <tr>
-                              <td>{{ $no++ }}</td>
+                              {{-- <td>{{ $no++ }}</td> --}}
+                              <td>{{ $bidang->firstItem() + $key }}</td>
                               <td>{{ $row->nama }}</td>
                               <td>{{ $row->id_parent }}</td>
                             <td>
@@ -76,15 +77,7 @@
                         </tbody>
                       </table>
                     </div>
-                    <nav aria-label="Table Paging" class="my-3">
-                      <ul class="pagination justify-content-end mb-0">
-                        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                      </ul>
-                    </nav>
+                    {{ $bidang->links('vendor.pagination.bootstrap-4') }}
                   </div>
                 </div> <!-- Bordered table -->
             </div> <!-- .row -->
@@ -236,14 +229,14 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="unit" class="form-label"><strong>Nama Bidang</strong></label>
-                            <input type="text" class="form-control" name="nama" id="nama">
+                            <input type="text" class="form-control" name="nama" id="nama" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="unit" class="form-label"><strong>Id Parent</strong></label>
                             <select name="id_parent" id="id_parent" class="form-control">
-                                @foreach ($bidang as $row)
+                                @foreach ($unit as $row)
                                     <option value="{{ $row->id }}">{{ $row->nama }}</option>
                                 @endforeach
                             </select>
@@ -285,11 +278,8 @@
                         <div class="form-group">
                             <label for="unit" class="form-label"><strong>Id Parent</strong></label>
                             <select name="id_parent" id="id_parent-edit" class="form-control">
-                                @php
-                                    $parent = App\Models\Organisasi::where('id_parent', $row->id_parent)->first();
-                                @endphp
-                                @foreach ($bidang as $row)
-                                    <option value="{{ $row->id }}" {{ ($row->id == $parent->id_parent) ? 'selected' : '' }}>{{ $row->nama }}</option>
+                                @foreach ($unit as $val)
+                                    <option value="{{ $val->id }}" {{ ($val->id == $row->id_parent) ? 'selected' : '' }}>{{ $val->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
